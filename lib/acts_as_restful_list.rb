@@ -25,7 +25,7 @@ module ActsAsRestfulList
       
       define_method 'scope_condition' do
         if configuration[:scope].nil?
-          nil
+          '1=1'
         else
           scopes = Array(configuration[:scope]).collect do |scope|
             column = self.class.column_names.include?(scope.to_s) ? scope.to_s : "#{scope}_id"
@@ -38,7 +38,7 @@ module ActsAsRestfulList
       
       define_method 'scope_condition_was' do
         if configuration[:scope].nil?
-          nil
+          '1=1'
         else
           scopes = Array(configuration[:scope]).collect do |scope|
             column = self.class.column_names.include?(scope.to_s) ? scope.to_s : "#{scope}_id"
@@ -84,7 +84,7 @@ module ActsAsRestfulList
     end
     
     def initialize_order
-      initial_set = self.class.find(:all,:conditions=>scope_condition,:select=>"id",:order=>"created_at ASC")
+      initial_set = self.class.where(:conditions=>scope_condition,:select=>"id",:order=>"created_at ASC")
       
       initial_set.each_with_index do |item,idx|
         ActiveRecord::Base.connection.execute("update #{self.class.table_name} set position = #{idx + 1} where id = #{item.id};")
